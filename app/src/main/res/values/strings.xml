@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="appName">포도랑</string>
+    <string name="launchUrl">https://podolang.kr/</string>
+    <string name="hostName">podolang.kr</string>
+    <!-- 이 앱이 podolang.kr 의 주인이라는 표시. 짝은 podolang.kr/.well-known/assetlinks.json -->
+    <string name="assetStatements" translatable="false">
+        [{
+            \"relation\": [\"delegate_permission/common.handle_all_urls\"],
+            \"target\": {\"namespace\": \"web\", \"site\": \"https://podolang.kr\"}
+        }]
+    </string>
+</resources>

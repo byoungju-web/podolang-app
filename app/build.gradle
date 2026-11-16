@@ -1,0 +1,55 @@
+// 포도랑 앱 (kr.podolang.app) — TWA + 구글 플레이 결제 (Digital Goods API)
+//  · androidbrowserhelper 2.7.4 · billing 1.2.0 (Play Billing Library 8.3 — 2026-08-31 부터 새 앱·업데이트에 필요)
+//  · 버전 번호는 GitHub Actions 실행 번호로 자동 (올릴 때마다 1씩 올라감)
+//  · 서명: GitHub Secret PL_KEYSTORE_B64 · PL_KS_PASS (업로드 키 · 별칭 podolang)
+plugins {
+    id 'com.android.application'
+}
+
+def runNo = (System.getenv('GITHUB_RUN_NUMBER') ?: '1') as int
+def ks = System.getenv('PL_KEYSTORE')
+
+android {
+    namespace 'kr.podolang.app'
+    compileSdk 36
+
+    defaultConfig {
+        applicationId 'kr.podolang.app'
+        minSdk 24
+        targetSdk 36
+        versionCode runNo
+        versionName "1.0." + runNo
+    }
+
+    signingConfigs {
+        release {
+            if (ks) {
+                storeFile file(ks)
+                storePassword System.getenv('PL_KS_PASS')
+                keyAlias 'podolang'
+                keyPassword System.getenv('PL_KS_PASS')
+            }
+        }
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            if (ks) signingConfig signingConfigs.release
+        }
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+
+    lint {
+        checkReleaseBuilds false
+    }
+}
+
+dependencies {
+    implementation 'com.google.androidbrowserhelper:androidbrowserhelper:2.7.4'
+    implementation 'com.google.androidbrowserhelper:billing:1.2.0'
+}

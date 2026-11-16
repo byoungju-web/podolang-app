@@ -1,0 +1,18 @@
+// 포도랑 안드로이드 앱 (TWA) — podolang.kr 을 크롬으로 앱처럼 띄우고, 구글 플레이 결제를 연결한다.
+// 구조는 구글 공식 Bubblewrap 1.25 템플릿과 같은 판 (AGP 8.9.1 · Gradle 8.11.1 · compile/target SDK 36)
+buildscript {
+    repositories {
+        google()
+        mavenCentral()
+    }
+    dependencies {
+        classpath 'com.android.tools.build:gradle:8.9.1'
+    }
+}
+
+allprojects {
+    repositories {
+        google()
+        mavenCentral()
+    }
+}
