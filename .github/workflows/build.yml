@@ -1,0 +1,48 @@
+# 포도랑 앱 — GitHub 에 올릴 때마다 설치 파일을 자동으로 만들어 Releases 에 올린다.
+#   · podolang.aab = 구글 플레이(Play Console)에 올리는 파일
+#   · podolang.apk = 폰에 직접 깔아 보는 시험용 (구글 결제는 플레이에서 받은 앱에서만 됨)
+# 서명 키: 저장소 Settings → Secrets and variables → Actions 의 PL_KEYSTORE_B64 · PL_KS_PASS
+name: build-app
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - uses: android-actions/setup-android@v3
+        with:
+          packages: 'platform-tools platforms;android-36 build-tools;35.0.0'
+      - uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '8.11.1'
+      - name: Signing key
+        env:
+          KS: ${{ secrets.PL_KEYSTORE_B64 }}
+        run: |
+          if [ -z "$KS" ]; then echo "::error::GitHub Secret PL_KEYSTORE_B64 가 없습니다"; exit 1; fi
+          echo "$KS" | base64 -d > "$RUNNER_TEMP/podolang.jks"
+          echo "PL_KEYSTORE=$RUNNER_TEMP/podolang.jks" >> "$GITHUB_ENV"
+      - name: Upload key fingerprint (assetlinks.json 용)
+        env:
+          PL_KS_PASS: ${{ secrets.PL_KS_PASS }}
+        run: keytool -list -v -keystore "$PL_KEYSTORE" -storepass "$PL_KS_PASS" | grep "SHA256:" || true
+      - name: Build APK + AAB
+        env:
+          PL_KS_PASS: ${{ secrets.PL_KS_PASS }}
+        run: gradle assembleRelease bundleRelease --no-daemon --stacktrace
+      - name: Publish to Releases
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          cp app/build/outputs/apk/release/app-release.apk podolang.apk
+          cp app/build/outputs/bundle/release/app-release.aab podolang.aab
+          gh release create "v1.0.${{ github.run_number }}" podolang.aab podolang.apk --title "포도랑 1.0.${{ github.run_number }}" --notes "자동 빌드 · podolang.aab 는 Play Console 에 올리는 파일 · podolang.apk 는 시험 설치용" --latest
