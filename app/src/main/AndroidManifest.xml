@@ -2,6 +2,14 @@
 <!-- 포도랑 앱 (TWA) — 구글 공식 Bubblewrap 템플릿 + Play Billing 기능과 같은 구성 -->
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
 
+    <!-- v1.0.3 오디오·스트림 번역: 다른 앱 소리 받기(녹음 권한 필요) · 포그라운드 서비스 · 알림 · 다른 앱 위 자막 -->
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_MEDIA_PROJECTION" />
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -56,6 +64,28 @@
         </activity>
 
         <activity android:name="com.google.androidbrowserhelper.trusted.FocusActivity" />
+
+        <!-- v1.0.3 오디오·스트림 번역 화면 — podolang.kr 이 podolang://audio?... 로 엽니다 -->
+        <activity
+            android:name=".AudioActivity"
+            android:exported="true"
+            android:launchMode="singleTop"
+            android:label="@string/audioTitle"
+            android:theme="@android:style/Theme.Material.Light.NoActionBar"
+            android:screenOrientation="portrait">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="podolang" android:host="audio" />
+            </intent-filter>
+        </activity>
+
+        <!-- 다른 앱 소리를 받는 서비스 (안드로이드 14+ 는 mediaProjection 종류가 꼭 필요) -->
+        <service
+            android:name=".AudioCaptureService"
+            android:exported="false"
+            android:foregroundServiceType="mediaProjection" />
 
         <activity android:name="com.google.androidbrowserhelper.trusted.WebViewFallbackActivity"
             android:configChanges="orientation|screenSize" />
