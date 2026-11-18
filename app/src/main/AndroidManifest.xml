@@ -98,6 +98,35 @@
             </intent-filter>
         </activity>
 
+        <!-- v1.0.6 메신저 대화 번역 — 어느 앱에서든 글자를 길게 눌러 고르면 메뉴에 '포도랑 번역' (안드로이드 공식 기능 · 접근성 권한 필요 없음) -->
+        <activity
+            android:name=".ProcessTextActivity"
+            android:label="포도랑 번역"
+            android:exported="true"
+            android:excludeFromRecents="true"
+            android:theme="@android:style/Theme.Material.Light.Dialog.NoActionBar">
+            <intent-filter>
+                <action android:name="android.intent.action.PROCESS_TEXT" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:mimeType="text/plain" />
+            </intent-filter>
+        </activity>
+
+        <!-- v1.0.6 메신저 번역 연결 — podolang.kr 이 podolang://link?tk=&mine=&peer= 로 엽니다 (로그인 키 · 언어를 이 앱 안에 저장) -->
+        <activity
+            android:name=".LinkActivity"
+            android:exported="true"
+            android:excludeFromRecents="true"
+            android:noHistory="true"
+            android:theme="@android:style/Theme.Translucent.NoTitleBar">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="podolang" android:host="link" />
+            </intent-filter>
+        </activity>
+
         <!-- 다른 앱 소리를 받는 서비스 (안드로이드 14+ 는 mediaProjection 종류가 꼭 필요) -->
         <service
             android:name=".AudioCaptureService"
