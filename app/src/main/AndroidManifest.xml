@@ -12,6 +12,7 @@
 
     <application
         android:name=".App"
+        android:manageSpaceActivity="com.google.androidbrowserhelper.trusted.ManageDataLauncherActivity"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:roundIcon="@mipmap/ic_launcher_round"
@@ -22,6 +23,13 @@
         <meta-data
             android:name="asset_statements"
             android:resource="@string/assetStatements" />
+
+        <!-- v1.0.5 사이트 설정(데이터 관리) 화면 — 앱을 열 때 라이브러리가 이 화면을 켜고 끄므로 꼭 등록해야 함 (없으면 열자마자 꺼짐) -->
+        <activity android:name="com.google.androidbrowserhelper.trusted.ManageDataLauncherActivity">
+            <meta-data
+                android:name="android.support.customtabs.trusted.MANAGE_SPACE_URL"
+                android:value="@string/launchUrl" />
+        </activity>
 
         <activity android:name="com.google.androidbrowserhelper.trusted.LauncherActivity"
             android:alwaysRetainTaskState="true"
